@@ -66,8 +66,8 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
           docker container create --name cache ghcr.io/${{ github.repository }}/container-dev-builder:${{ matrix.app-env }}-${{ matrix.maven-vsn }}-${{ matrix.maven-jdk-vsn }}-${{ github.sha }}
-          docker container cp cache:/opt/app/.m2 .
           docker container cp cache:/opt/app/target .
+          docker container cp cache:/opt/app/.m2 .
   check-formatted:
     runs-on: ubuntu-latest
     needs: build
