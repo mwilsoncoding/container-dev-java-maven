@@ -65,7 +65,7 @@ jobs:
       - name: Copy Docker Contents to Host
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
-          docker run --rm --entrypoint ls ghcr.io/${{ github.repository }}/container-dev-builder:${{ matrix.app-env }}-${{ matrix.maven-vsn }}-${{ matrix.maven-jdk-vsn }}-${{ github.sha }} -al
+          docker run --entrypoint sh ghcr.io/${{ github.repository }}/container-dev-builder:${{ matrix.app-env }}-${{ matrix.maven-vsn }}-${{ matrix.maven-jdk-vsn }}-${{ github.sha }} -c 'ls -al && mvn dependency:go-offline -f pom.xml -P $MAVEN_PROFILES && ls -al'
           docker container create --name cache ghcr.io/${{ github.repository }}/container-dev-builder:${{ matrix.app-env }}-${{ matrix.maven-vsn }}-${{ matrix.maven-jdk-vsn }}-${{ github.sha }}
           docker container cp cache:/opt/app/target .
           docker container cp cache:/opt/app/.m2 .
@@ -108,4 +108,4 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - run: |-
-          docker container run ghcr.io/${{ github.repository }}/container-dev-builder:${{ matrix.app-env }}-${{ matrix.maven-vsn }}-${{ matrix.maven-jdk-vsn }}-${{ github.sha }} mvn test -o -P $MAVEN_PROFILES -f /opt/app/pom.xml
+          docker container run ghcr.io/${{ github.repository }}/container-dev-builder:${{ matrix.app-env }}-${{ matrix.maven-vsn }}-${{ matrix.maven-jdk-vsn }}-${{ github.sha }} mvn test -o -P $MAVEN_PROFILES -f pom.xml
