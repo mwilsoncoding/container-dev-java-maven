@@ -55,7 +55,7 @@ jobs:
       - name: Build the Docker image
         run: |
           docker build . \
-            --tag ghcr.io/${{ github.repository }}/container-dev-builder:${{ matrix.build-env }}-${{ matrix.base-img }}-${{ matrix.base-img-vsn }}-${{ github.sha }} \
+            --tag ghcr.io/${{ github.repository }}/container-dev-builder:${{ matrix.app-env }}-${{ matrix.maven-vsn }}-${{ matrix.maven-jdk-vsn }}-${{ github.sha }} \
             --target builder \
             --build-arg BUILDER_REGISTRY=${{ env.BUILDER_BASE_IMAGE_REGISTRY }} \
             --build-arg BUILDER_REGISTRY_PATH=${{ env.BUILDER_BASE_IMAGE_REGISTRY_PATH }} \
