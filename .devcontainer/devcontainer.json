@@ -16,7 +16,7 @@
 
   "forwardPorts": [],
 
-  "postCreateCommand": "",
+  "postCreateCommand": "mvn -T 99C dependency:go-offline -q -f pom.xml",
 
   "remoteUser": "dev",
 
@@ -24,6 +24,8 @@
 	"editorconfig.editorconfig",
 	"github.vscode-pull-request-github",
 	"redhat.vscode-yaml",
-	"ms-azuretools.vscode-docker"
+	"ms-azuretools.vscode-docker",
+	"vscjava.vscode-java-pack",
+  "DotJoshJohnson.xml"
   ]
 }

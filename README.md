@@ -1,38 +1,28 @@
-# container-dev
+# container-dev-elixir
 
-An opinionated, language-agnostic, starting point for containerized development.
-
-This is a repo from which similarly-opinionated, language-specific, template repos are derived.
-
-Language-specific derivations of this repo:
+An opinionated starting point for containerized development in Java.
 
 ## How to Use
 
 - Follow [the official instructions](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template) on creating a new repo from a template.
-- Create a new project in the new repo's root directory and modify the template as needed
-
-### Examples
-
-In the following examples, `$MY_NEW_REPO_ACCESS_LEVEL` is either `--public` or `--private`
-
-Modification of a number of these template files is dependent on language choice.
-
-#### Elixir
-
-Check out [the Elixir template](https://github.com/mwilsoncoding/container-dev-elixir)
+- Modify new repository settings accordingly
 
 ```console
-MY_NEW_REPO=container-dev-elixir
-MY_NEW_REPO_ACCESS_LEVEL=--public
-OTP_APP=my_app
-gh repo create $MY_NEW_REPO $MY_NEW_REPO_ACCESS_LEVEL --template mwilsoncoding/container-dev
+# After creating $MY_NEW_REPO from this template
+git clone $MY_NEW_REPO
+```
+```console
 cd $MY_NEW_REPO
+```
+```console
 docker run \
   --rm \
   -it \
   -v $(pwd):/workspace \
   -w /workspace \
-  -e OTP_APP \
-  elixir:1.14.0-alpine \
-  mix new --app $OTP_APP .
+  --entrypoint sh
+  -e OTP_APP=my_app \
+  -e MODULE=MyApp \
+  alpine:latest \
+  -c 'sed -i -e "s/elixir_dev/${OTP_APP}/g" .gitignore mix.exs && sed -i -e "s/ElixirDev/${MODULE}/g" lib/elixir_dev.ex test/elixir_dev_test.exs mix.exs && mv ./lib/elixir_dev.ex ./lib/${OTP_APP}.ex && mv ./test/elixir_dev_test.exs ./test/${OTP_APP}_test.exs'
 ```
