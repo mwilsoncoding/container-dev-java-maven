@@ -18,7 +18,7 @@ ARG APP_DIR=/opt/app
 
 # # Set an ARG for switching app build envs
 ARG APP_ENV=prod
-ARG MAVEN_PROFILES=default-java,${APP_ENV}
+ARG MAVEN_PROFILES=${APP_ENV}
 
 # # Set any other args shared between build stages
 ARG JAR=containerdevjava.0.1.0.jar
