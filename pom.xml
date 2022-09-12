@@ -23,8 +23,6 @@
       <activation>
         <property>
           <name>!env.MAVEN_JDK_VSN</name>
-        </property>
-        <property>
           <name>!env.JRE_VSN</name>
         </property>
       </activation>
