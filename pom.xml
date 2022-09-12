@@ -17,9 +17,6 @@
     <maven.compiler.target>${env.JRE_VSN}</maven.compiler.target>
   </properties>
 
-  <activeProfiles>
-    <activeProfile>default-java</activeProfile>
-  </activeProfiles>
   <profiles>
     <profile>
       <id>default-java</id>
