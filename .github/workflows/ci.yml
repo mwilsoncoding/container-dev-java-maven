@@ -65,7 +65,7 @@ jobs:
       - name: Copy Docker Contents to Host
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
-          docker run --rm --entrypoint ls ghcr.io/${{ github.repository }}/container-dev-builder:${{ matrix.app-env }}-${{ matrix.maven-vsn }}-${{ matrix.maven-jdk-vsn }}-${{ github.sha }} ls -al
+          docker run --rm --entrypoint ls ghcr.io/${{ github.repository }}/container-dev-builder:${{ matrix.app-env }}-${{ matrix.maven-vsn }}-${{ matrix.maven-jdk-vsn }}-${{ github.sha }} -al
           docker container create --name cache ghcr.io/${{ github.repository }}/container-dev-builder:${{ matrix.app-env }}-${{ matrix.maven-vsn }}-${{ matrix.maven-jdk-vsn }}-${{ github.sha }}
           docker container cp cache:/opt/app/target .
           docker container cp cache:/opt/app/.m2 .
