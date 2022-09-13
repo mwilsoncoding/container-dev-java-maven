@@ -111,4 +111,4 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - run: |-
-          docker container run ghcr.io/${{ github.repository }}/container-dev-builder:${{ matrix.app-env }}-${{ matrix.maven-vsn }}-${{ matrix.maven-jdk-vsn }}-${{ github.sha }} mvn test -o -P "$MAVEN_PROFILES" -f pom.xml
+          docker container run ghcr.io/${{ github.repository }}/container-dev-builder:${{ matrix.app-env }}-${{ matrix.maven-vsn }}-${{ matrix.maven-jdk-vsn }}-${{ github.sha }} mvn test -P "$MAVEN_PROFILES" -f pom.xml
