@@ -4,22 +4,25 @@ on:
   push:
     branches: [main]
 env:
-  BASE_IMG_REGISTRY: docker.io
-  BASE_IMG_REGISTRY_PATH: library
+  BUILDER_BASE_IMAGE: maven
+  BUILDER_BASE_IMAGE_REGISTRY: docker.io
+  BUILDER_BASE_IMAGE_REGISTRY_PATH: library
+  RUNNER_BASE_IMAGE: eclipse-temurin
+  RUNNER_BASE_IMAGE_REGISTRY: docker.io
+  RUNNER_BASE_IMAGE_REGISTRY_PATH: library
 jobs:
   build-cache:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        build-env:
+        app-env:
           - dev
-          #          - test
-          #          - prod
-        base-img:
-          - alpine
-        base-img-vsn:
-          #          - 3.15.6
-          - 3.16.2
+          - test
+          - prod
+        maven-vsn:
+          - 3.8.6
+        maven-jdk-vsn:
+          - 18
     steps:
       - uses: actions/checkout@v3
       - name: Set up Docker Buildx
@@ -39,48 +42,39 @@ jobs:
         with:
           # Cache deps, build, and package mgr dirs
           path: |
-            .yamllint
-          # deps
-          # _build
-          # .hex
-          # .mix
-          # .cache
+            .m2
+            target
 
           # Cache based on OS, BUILD_ENV, LANG, LANG_VSN, and hashFiles('**/lang.lock')
           # The default branch should cache the same without the hash for a restore
           # from latest merge to the default branch
-          key: ${{ runner.os }}-${{ matrix.build-env }}-${{ matrix.base-img }}-${{ matrix.base-img-vsn }}
+          key: ${{ matrix.app-env }}-${{ matrix.maven-vsn }}-${{ matrix.maven-jdk-vsn }}
       - name: Update Cache
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
           docker build . \
             --tag ghcr.io/${{ github.repository }}/container-dev-builder:${{ matrix.build-env }}-${{ matrix.base-img }}-${{ matrix.base-img-vsn }}-${{ github.sha }} \
             --target builder \
-            --build-arg MIX_ENV=${{ matrix.mix-env }} \
-            --build-arg REGISTRY=${{ env.BASE_IMG_REGISTRY }} \
-            --build-arg REGISTRY_PATH=${{ env.BASE_IMG_REGISTRY_PATH }} \
-            --build-arg BASE_IMAGE=${{ matrix.base-img }} \
-            --build-arg BASE_IMAGE_TAG=${{ matrix.base-img-vsn }}
+            --build-arg BUILDER_REGISTRY=${{ env.BUILDER_BASE_IMAGE_REGISTRY }} \
+            --build-arg BUILDER_REGISTRY_PATH=${{ env.BUILDER_BASE_IMAGE_REGISTRY_PATH }} \
+            --build-arg BUILDER_BASE_IMAGE=${{ env.BUILDER_BASE_IMAGE }} \
+            --build-arg BUILDER_BASE_IMAGE_TAG=${{ matrix.maven-vsn }}-eclipse-temurin-${{ matrix.maven-jdk-vsn }}-alpine \
+            --build-arg APP_ENV=${{ matrix.app-env }}
           docker container create --name cache ghcr.io/${{ github.repository }}/container-dev-builder:${{ matrix.build-env }}-${{ matrix.base-img }}-${{ matrix.base-img-vsn }}-${{ github.sha }}
-          docker container cp cache:/opt/app/.yamllint .
-          # docker container cp cache:/opt/app/deps .
-          # docker container cp cache:/opt/app/_build .
-          # docker container cp cache:/opt/app/.mix .
-          # docker container cp cache:/opt/app/.hex .
-          # docker container cp cache:/opt/app/.cache .
+          docker container cp cache:/opt/app/.m2 .
+          docker container cp cache:/opt/app/target .
   build-publish:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        build-env:
-          - dev
-          #          - test
-          #          - prod
-        base-img:
-          - alpine
-        base-img-vsn:
-          #          - 3.15.6
-          - 3.16.2
+        app-env:
+          - prod
+        maven-vsn:
+          - 3.8.6
+        maven-jdk-vsn:
+          - 18
+        jre-vsn:
+          - 18.0.2.1_1
     steps:
       - uses: actions/checkout@v3
       - name: Set up Docker Buildx
@@ -101,7 +95,12 @@ jobs:
           tags: ghcr.io/${{ github.repository }}/container-dev:${{ github.sha }}
           context: .
           build-args: |-
-            REGISTRY=${{ env.BASE_IMG_REGISTRY }}
-            REGISTRY_PATH=${{ env.BASE_IMG_REGISTRY_PATH }}
-            BASE_IMAGE=${{ matrix.base-img }}
-            BASE_IMAGE_TAG=${{ matrix.base-img-vsn }}
+            BUILDER_REGISTRY=${{ env.BUILDER_BASE_IMAGE_REGISTRY }}
+            BUILDER_REGISTRY_PATH=${{ env.BUILDER_BASE_IMAGE_REGISTRY_PATH }}
+            BUILDER_BASE_IMAGE=${{ env.BUILDER_BASE_IMAGE }}
+            BUILDER_BASE_IMAGE_TAG=${{ matrix.maven-vsn }}-eclipse-temurin-${{ matrix.maven-jdk-vsn }}-alpine
+            RUNNER_REGISTRY=${{ env.RUNNER_BASE_IMAGE_REGISTRY }}
+            RUNNER_REGISTRY_PATH=${{ env.RUNNER_BASE_IMAGE_REGISTRY_PATH }}
+            RUNNER_BASE_IMAGE=${{ env.RUNNER_BASE_IMAGE }}
+            RUNNER_BASE_IMAGE_TAG=${{ matrix.jre-vsn }}-jre-alpine
+            APP_ENV=${{ matrix.app-env }}
