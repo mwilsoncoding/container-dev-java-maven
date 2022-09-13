@@ -53,19 +53,8 @@ RUN mvn package -q \
     -Dmaven.repo.local=$MAVEN_CONFIG \
     -P $MAVEN_PROFILES \
     $(if ! echo "$MAVEN_PROFILES" | grep -q ',\??\?\<test\>,\?'; then \
-        echo '-Dmaven.test.skip=true'; \
+        echo '-DskipTests=true'; \
       fi)
-
-# GitHub Actions will break if any cached directories don't exist in the
-# generated container. Assure they exist
-# RUN mkdir -p deps .cache .hex
-
-# Some artifacts are generated for testing purposes only
-# If the configured env is appropriate, generate them in the container
-# RUN if echo "$MAVEN_PROFILES" | grep -q ',\??\?\<test\>,\?'; then \
-#       mvn test-compile -q -P $MAVEN_PROFILES -f pom.xml; \
-#     fi
-
 
 # Runner stage
 FROM ${RUNNER_REGISTRY}/${RUNNER_REGISTRY_PATH}/${RUNNER_BASE_IMAGE}:${RUNNER_BASE_IMAGE_TAG}
