@@ -1,6 +1,6 @@
-# container-dev-elixir
+# container-dev-java-maven
 
-An opinionated starting point for containerized development in Java.
+An opinionated starting point for containerized development in Java with the Maven build tool.
 
 ## How to Use
 
