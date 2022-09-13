@@ -53,14 +53,14 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
           docker build . \
-            --tag ghcr.io/${{ github.repository }}/container-dev-builder:${{ matrix.build-env }}-${{ matrix.base-img }}-${{ matrix.base-img-vsn }}-${{ github.sha }} \
+            --tag ghcr.io/${{ github.repository }}/container-dev-builder:${{ matrix.app-env }}-${{ matrix.maven-vsn }}-${{ matrix.maven-jdk-vsn }}-${{ github.sha }} \
             --target builder \
             --build-arg BUILDER_REGISTRY=${{ env.BUILDER_BASE_IMAGE_REGISTRY }} \
             --build-arg BUILDER_REGISTRY_PATH=${{ env.BUILDER_BASE_IMAGE_REGISTRY_PATH }} \
             --build-arg BUILDER_BASE_IMAGE=${{ env.BUILDER_BASE_IMAGE }} \
             --build-arg BUILDER_BASE_IMAGE_TAG=${{ matrix.maven-vsn }}-eclipse-temurin-${{ matrix.maven-jdk-vsn }}-alpine \
             --build-arg APP_ENV=${{ matrix.app-env }}
-          docker container create --name cache ghcr.io/${{ github.repository }}/container-dev-builder:${{ matrix.build-env }}-${{ matrix.base-img }}-${{ matrix.base-img-vsn }}-${{ github.sha }}
+          docker container create --name cache ghcr.io/${{ github.repository }}/container-dev-builder:${{ matrix.app-env }}-${{ matrix.maven-vsn }}-${{ matrix.maven-jdk-vsn }}-${{ github.sha }}
           docker container cp cache:/opt/app/.m2 .
           docker container cp cache:/opt/app/target .
   build-publish:
