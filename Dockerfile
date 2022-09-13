@@ -67,9 +67,9 @@ ARG APP_DIR
 # ARG MIX_ENV
 # 
 # # Copy from the built directory into the runner stage at the same directory
-# ARG BUILD_DIR=$APP_DIR/_build
-# WORKDIR $BUILD_DIR
-# COPY --from=builder $BUILD_DIR .
+ARG BUILD_DIR=$APP_DIR/target
+WORKDIR $BUILD_DIR
+COPY --from=builder $BUILD_DIR .
 # 
 # # Preserve the build environment in an ENV if necessary
 # ENV MIX_ENV $MIX_ENV
@@ -78,6 +78,6 @@ ARG APP_DIR
 # ARG RUN_DIR=$BUILD_DIR/$MIX_ENV/rel/$OTP_APP/bin
 # WORKDIR $RUN_DIR
 WORKDIR $APP_DIR
-# 
+
 # # Use CMD to allow overrides when invoked via `docker container run`
-# CMD ["java","-cp"]
+CMD ["java","-cp","target/containerdevjava-0.1.0.jar","com.containerdevjava.App"]
