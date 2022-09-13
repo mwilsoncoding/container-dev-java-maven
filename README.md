@@ -7,22 +7,7 @@ An opinionated starting point for containerized development in Java.
 - Follow [the official instructions](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template) on creating a new repo from a template.
 - Modify new repository settings accordingly
 
-```console
-# After creating $MY_NEW_REPO from this template
-git clone $MY_NEW_REPO
-```
-```console
-cd $MY_NEW_REPO
-```
-```console
-docker run \
-  --rm \
-  -it \
-  -v $(pwd):/workspace \
-  -w /workspace \
-  --entrypoint sh
-  -e OTP_APP=my_app \
-  -e MODULE=MyApp \
-  alpine:latest \
-  -c 'sed -i -e "s/elixir_dev/${OTP_APP}/g" .gitignore mix.exs && sed -i -e "s/ElixirDev/${MODULE}/g" lib/elixir_dev.ex test/elixir_dev_test.exs mix.exs && mv ./lib/elixir_dev.ex ./lib/${OTP_APP}.ex && mv ./test/elixir_dev_test.exs ./test/${OTP_APP}_test.exs'
-```
+Most of this template is generic, however the following filenames and contents are specific to this `containerdevjava` quickstart and should be changed to new values:
+
+![Screenshot from 2022-09-12 21-50-49](https://user-images.githubusercontent.com/43796009/189790117-c42d3c50-719e-498e-947b-6024b9a221ac.png)
+
