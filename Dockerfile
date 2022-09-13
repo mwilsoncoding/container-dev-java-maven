@@ -53,6 +53,8 @@ RUN mvn package -q \
     -Dmaven.repo.local=$MAVEN_CONFIG \
     -P $MAVEN_PROFILES \
     $(if ! echo "$MAVEN_PROFILES" | grep -q ',\??\?\<test\>,\?'; then \
+        echo '-Dmaven.test.skip=true'; \
+      else \
         echo '-DskipTests=true'; \
       fi)
 
