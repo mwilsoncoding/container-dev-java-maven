@@ -16,7 +16,7 @@
 
   "forwardPorts": [],
 
-  "postCreateCommand": "mvn -T 99C dependency:go-offline -q -f pom.xml -Dmaven.test.skip=true -P default-java,dev",
+  "postCreateCommand": "mvn -T 99C dependency:go-offline -q -f pom.xml -Dmaven.test.skip=true -P dev,test,prod",
 
   "remoteUser": "dev",
 

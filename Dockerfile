@@ -33,8 +33,7 @@ ARG MAVEN_PROFILES
 
 # Persist necessary ARGs as ENVs for use in CI
 ENV MAVEN_PROFILES $MAVEN_PROFILES
-ENV MAVEN_CONFIG $APP_DIR/.m2
-
+ENV MAVEN_CONFIG ${APP_DIR}/.m2
 
 # Copy all src. Leverage .dockerignore to exclude unnecessary files.
 # This will copy any host directories used for local dependency
@@ -49,7 +48,7 @@ WORKDIR $APP_DIR
 # Install local package manager caches if missing (see above note re: COPY . $APP_DIR)
 # Get dependencies for the currently configured environment
 # Build, overwriting any extant build artifacts copied in from the host filesystem
-RUN mvn dependency:go-offline -q -f pom.xml -Dmaven.test.skip=true -P $MAVEN_PROFILES
+RUN mvn dependency:go-offline -q -f pom.xml -Dmaven.repo.local=$MAVEN_CONFIG -Dmaven.test.skip=true -P $MAVEN_PROFILES
 
 # GitHub Actions will break if any cached directories don't exist in the
 # generated container. Assure they exist
@@ -60,8 +59,8 @@ RUN mvn dependency:go-offline -q -f pom.xml -Dmaven.test.skip=true -P $MAVEN_PRO
 RUN if echo "$MAVEN_PROFILES" | grep -q ',\??\?\<test\>,\?'; then \
       mvn test-compile -q -P $MAVEN_PROFILES -f pom.xml; \
     fi
-# 
-# 
+
+
 # Runner stage
 FROM ${RUNNER_REGISTRY}/${RUNNER_REGISTRY_PATH}/${RUNNER_BASE_IMAGE}:${RUNNER_BASE_IMAGE_TAG}
 
@@ -84,4 +83,4 @@ ARG APP_DIR
 WORKDIR $APP_DIR
 # 
 # # Use CMD to allow overrides when invoked via `docker container run`
-# CMD ["./elixir_dev","start"]
+# CMD ["java","-cp"]

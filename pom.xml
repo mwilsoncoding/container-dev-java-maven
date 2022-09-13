@@ -25,18 +25,9 @@
           <name>!env.MAVEN_JDK_VSN</name>
         </property>
       </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.10.1</version>
-            <configuration>
-              <source>18</source>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
+      <properties>
+        <maven.compiler.source>18</maven.compiler.source>
+      </properties>
     </profile>
     <profile>
       <id>default-jre</id>
@@ -45,18 +36,9 @@
           <name>!env.JRE_VSN</name>
         </property>
       </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.10.1</version>
-            <configuration>
-              <target>18</target>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
+      <properties>
+        <maven.compiler.target>18</maven.compiler.target>
+      </properties>
     </profile>
     <profile>
       <id>dev</id>
@@ -66,24 +48,17 @@
     </profile>
     <profile>
       <id>test</id>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-jar-plugin</artifactId>
-            <executions>
-              <execution>
-                <phase>package</phase>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
-                <configuration>
-                  <classifier>test</classifier>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+          <version>4.11</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
     </profile>
     <profile>
       <id>prod</id>
@@ -92,15 +67,6 @@
       </activation>
     </profile>
   </profiles>
-
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.11</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
 
   <build>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
