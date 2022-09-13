@@ -26,6 +26,6 @@
 	"redhat.vscode-yaml",
 	"ms-azuretools.vscode-docker",
 	"vscjava.vscode-java-pack",
-  "DotJoshJohnson.xml"
+        "DotJoshJohnson.xml"
   ]
 }

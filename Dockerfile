@@ -48,7 +48,13 @@ WORKDIR $APP_DIR
 # Install local package manager caches if missing (see above note re: COPY . $APP_DIR)
 # Get dependencies for the currently configured environment
 # Build, overwriting any extant build artifacts copied in from the host filesystem
-RUN mvn dependency:go-offline -q -f pom.xml -Dmaven.repo.local=$MAVEN_CONFIG -Dmaven.test.skip=true -P $MAVEN_PROFILES
+RUN mvn package -q \
+    -f pom.xml \
+    -Dmaven.repo.local=$MAVEN_CONFIG \
+    -P $MAVEN_PROFILES \
+    $(if ! echo "$MAVEN_PROFILES" | grep -q ',\??\?\<test\>,\?'; then \
+        echo '-Dmaven.test.skip=true'; \
+      fi)
 
 # GitHub Actions will break if any cached directories don't exist in the
 # generated container. Assure they exist
@@ -56,9 +62,9 @@ RUN mvn dependency:go-offline -q -f pom.xml -Dmaven.repo.local=$MAVEN_CONFIG -Dm
 
 # Some artifacts are generated for testing purposes only
 # If the configured env is appropriate, generate them in the container
-RUN if echo "$MAVEN_PROFILES" | grep -q ',\??\?\<test\>,\?'; then \
-      mvn test-compile -q -P $MAVEN_PROFILES -f pom.xml; \
-    fi
+# RUN if echo "$MAVEN_PROFILES" | grep -q ',\??\?\<test\>,\?'; then \
+#       mvn test-compile -q -P $MAVEN_PROFILES -f pom.xml; \
+#     fi
 
 
 # Runner stage
